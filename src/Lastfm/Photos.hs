@@ -1,5 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
 
 module Lastfm.Photos(
                      artistPhotoPage,
@@ -8,11 +10,13 @@ module Lastfm.Photos(
 
 import qualified Data.Text as T
 import qualified Text.HTML.TagSoup as TS
+import qualified Data.Aeson as A
+import GHC.Generics
 import Data.Monoid
 import Data.Maybe(mapMaybe)
 import Data.List(find)
 
-newtype ImagesPageUrl = ImagesPageUrl T.Text deriving (Eq, Show)
+newtype ImagesPageUrl = ImagesPageUrl { imagesUrl :: T.Text } deriving (Eq, Show, Generic, A.ToJSON)
 
 artistPhotoPage :: T.Text -> ImagesPageUrl
 artistPhotoPage artist = ImagesPageUrl $ "http://www.last.fm/music/" <> artist' <> "/+images"
@@ -21,12 +25,12 @@ artistPhotoPage artist = ImagesPageUrl $ "http://www.last.fm/music/" <> artist' 
 data ArtistPhoto = ArtistPhoto {
                        thumb :: T.Text,
                        full :: T.Text
-                   } deriving (Eq, Show)
+                   } deriving (Eq, Show, Generic, A.ToJSON)
 
 data ParsePageResult = ParsePageResult {
                            photoList :: [ArtistPhoto],
                            nextPage :: Maybe ImagesPageUrl
-                       } deriving (Eq, Show)
+                       } deriving (Eq, Show, Generic, A.ToJSON)
 
 parsePage :: T.Text -> ParsePageResult
 parsePage str = ParsePageResult { .. }
