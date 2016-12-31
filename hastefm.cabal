@@ -28,6 +28,8 @@ executable hastefm-exe
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , hastefm
+                     , snap-server
+                     , snap-core
   default-language:    Haskell2010
 
 test-suite hastefm-test
