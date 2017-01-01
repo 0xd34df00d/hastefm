@@ -46,5 +46,5 @@ getArtistPhoto (TS.TagOpen _ attrs) | Just (_, src) <- find ((== "src") . fst) a
                                     | otherwise = Nothing
 getArtistPhoto _ = error "Unexpected element type"
 
-_silence_unused :: [a]
-_silence_unused = [undefined thumb, undefined full, undefined imagesUrl]
+_silenceUnused :: [a]
+_silenceUnused = [undefined thumb, undefined full, undefined imagesUrl]
