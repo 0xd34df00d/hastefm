@@ -21,8 +21,10 @@ site = S.route [("photos/pageurl", pageUrlHandler),
 pageUrlHandler :: S.Snap ()
 pageUrlHandler = do
     artist <- S.getPostParam "artist"
-    maybe (S.writeBS "must specify the artist") S.writeLBS $ handleArtist <$> artist
-    where handleArtist = either (BSL.pack . show) (A.encode . artistPhotoPage) . T.decodeUtf8'
+    maybe (S.writeBS "must specify the artist") S.writeLBS $ runOnText artistPhotoPage <$> artist
 
 parsePageHandler :: S.Snap ()
 parsePageHandler = undefined
+
+runOnText :: A.ToJSON a => (T.Text -> a) -> BS.ByteString -> BSL.ByteString
+runOnText f = either (BSL.pack . show) (A.encode . f) . T.decodeUtf8'
