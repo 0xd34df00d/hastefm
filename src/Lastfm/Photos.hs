@@ -44,6 +44,7 @@ isArtistPhoto _ = False
 getArtistPhoto :: TS.Tag T.Text -> Maybe ArtistPhoto
 getArtistPhoto (TS.TagOpen _ attrs) | Just (_, src) <- find ((== "src") . fst) attrs = Just $ ArtistPhoto src $ T.replace "avatar170s" "770x0" src
                                     | otherwise = Nothing
+getArtistPhoto _ = error "Unexpected element type"
 
 _silence_unused :: [a]
 _silence_unused = [undefined thumb, undefined full, undefined imagesUrl]
