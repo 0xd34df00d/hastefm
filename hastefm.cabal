@@ -30,6 +30,9 @@ executable hastefm-exe
                      , hastefm
                      , snap-server
                      , snap-core
+                     , bytestring
+                     , text
+                     , aeson
   default-language:    Haskell2010
 
 test-suite hastefm-test
