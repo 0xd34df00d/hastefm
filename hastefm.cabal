@@ -33,6 +33,7 @@ executable hastefm-exe
                      , bytestring
                      , text
                      , aeson
+                     , io-streams
   default-language:    Haskell2010
 
 test-suite hastefm-test
