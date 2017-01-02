@@ -16,7 +16,9 @@ import Data.Monoid
 import Lastfm.Photos
 
 main :: IO ()
-main = S.httpServe (S.setPort 12000 S.defaultConfig) site
+main = do
+    cfg <- S.commandLineConfig (S.setPort 12000 S.emptyConfig)
+    S.httpServe cfg site
 
 site :: S.Snap ()
 site = S.route [("photos/pageurl", pageUrlHandler),
