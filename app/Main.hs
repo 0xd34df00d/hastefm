@@ -21,8 +21,8 @@ main = do
     S.httpServe cfg site
 
 site :: S.Snap ()
-site = S.route [("photos/pageurl", pageUrlHandler),
-                ("photos/parsepage", parsePageHandler)]
+site = S.route [("artist/photos/pageurl", pageUrlHandler),
+                ("artist/photos/parsepage", parsePageHandler)]
 
 pageUrlHandler :: S.Snap ()
 pageUrlHandler = do
