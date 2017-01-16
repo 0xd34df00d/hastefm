@@ -8,9 +8,12 @@ BIND_PORT="12001"
 
 SSL_BIND_ADDRESS="off"
 SSL_BIND_PORT="off"
-
 SSL_CERT=""
 SSL_KEY=""
+# Uncomment the following if SSL_CERT contains full certificates chain.
+#SSL_FULL_CHAIN="--ssl-chain-cert"
 
 ACCESS_LOG="/var/log/hastefm/access.log"
 ERROR_LOG="/var/log/hastefm/error.log"
+
+ADDITIONAL_PARAMS="${SSL_FULL_CHAIN}"
