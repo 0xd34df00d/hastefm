@@ -1,0 +1,33 @@
+#!/sbin/openrc-run
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+depend() {
+	need net
+}
+
+start() {
+	ebegin "Starting hastefm"
+	start-stop-daemon --start \
+		--background \
+		--exec ${DAEMON} \
+		--pidfile ${PID} \
+		--make-pidfile \
+		-- \
+			-b ${BIND_ADDRESS} \
+			-p ${BIND_PORT} \
+			--ssl-address=${SSL_BIND_ADDRESS} \
+			--ssl-port=${SSL_BIND_PORT} \
+			--ssl-cert="${SSL_CERT}" \
+			--ssl-key="${SSL_KEY}" \
+			--access-log="${ACCESS_LOG}" \
+			--error-log="${ERROR_LOG}"
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping hastefm"
+	start-stop-daemon --stop --exec ${DAEMON} --pidfile ${PID}
+	eend $?
+}
