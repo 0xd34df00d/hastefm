@@ -1,5 +1,5 @@
 name:                hastefm
-version:             0.1.0.1
+version:             0.1.0.2
 synopsis:            Fetches some artist info from Last.FM for which no API is provided
 description:         Please see README.md
 homepage:            https://github.com/0xd34df00d/hastefm
