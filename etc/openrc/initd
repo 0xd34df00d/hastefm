@@ -22,7 +22,8 @@ start() {
 			--ssl-cert="${SSL_CERT}" \
 			--ssl-key="${SSL_KEY}" \
 			--access-log="${ACCESS_LOG}" \
-			--error-log="${ERROR_LOG}"
+			--error-log="${ERROR_LOG}" \
+            ${ADDITIONAL_PARAMS}
 	eend $?
 }
 
