@@ -21,7 +21,7 @@ import Data.List(find)
 newtype ImagesPageUrl = ImagesPageUrl { imagesUrl :: T.Text } deriving (Eq, Show, Generic, A.ToJSON)
 
 artistPhotoPage :: T.Text -> ImagesPageUrl
-artistPhotoPage artist = ImagesPageUrl $ "http://www.last.fm/music/" <> artist' <> "/+images"
+artistPhotoPage artist = ImagesPageUrl $ "https://www.last.fm/music/" <> artist' <> "/+images"
     where artist' = T.replace " " "+" artist
 
 data ArtistPhoto = ArtistPhoto {
