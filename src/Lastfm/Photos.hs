@@ -3,10 +3,12 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
 
-module Lastfm.Photos(
-                     artistPhotoPage,
-                     parsePage
-                    ) where
+module Lastfm.Photos
+        (
+         artistPhotoPage,
+         parsePage
+        )
+        where
 
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
