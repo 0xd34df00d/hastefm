@@ -11,13 +11,11 @@ module Lastfm.Photos
         where
 
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as TL
 import qualified Text.HTML.TagSoup as TS
 import qualified Data.Aeson as A
 import GHC.Generics
 import Data.Monoid
 import Data.Maybe(mapMaybe)
-import Data.List(find)
 
 newtype ImagesPageUrl = ImagesPageUrl { imagesUrl :: T.Text } deriving (Eq, Show, Generic, A.ToJSON)
 
