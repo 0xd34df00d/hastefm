@@ -39,7 +39,7 @@ parsePage str = ParsePageResult { .. }
           nextPage = Nothing
 
 isArtistPhoto :: TS.Tag T.Text -> Bool
-isArtistPhoto (TS.TagOpen "img" attrs) | ("class", "image-list-image") `elem` attrs = True
+isArtistPhoto (TS.TagOpen "img" attrs) = ("class", "image-list-image") `elem` attrs
 isArtistPhoto _ = False
 
 getArtistPhoto :: TS.Tag T.Text -> Maybe ArtistPhoto
