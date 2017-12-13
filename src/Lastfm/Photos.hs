@@ -12,8 +12,7 @@ module Lastfm.Photos
 
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
-import qualified Text.Taggy.Parser as TG
-import qualified Text.Taggy.Types as TG
+import qualified Text.HTML.TagSoup as TS
 import qualified Data.Aeson as A
 import GHC.Generics
 import Data.Monoid
@@ -38,16 +37,16 @@ data ParsePageResult = ParsePageResult {
 
 parsePage :: T.Text -> ParsePageResult
 parsePage str = ParsePageResult { .. }
-    where photoList = mapMaybe getArtistPhoto $ filter isArtistPhoto $ TG.taggyWith False $ TL.fromStrict str
+    where photoList = mapMaybe getArtistPhoto $ filter isArtistPhoto $ TS.parseTags str
           nextPage = Nothing
 
-isArtistPhoto :: TG.Tag -> Bool
-isArtistPhoto (TG.TagOpen "img" attrs _) | TG.Attribute "class" "image-list-image" `elem` attrs = True
+isArtistPhoto :: TS.Tag T.Text -> Bool
+isArtistPhoto (TS.TagOpen "img" attrs) | ("class", "image-list-image") `elem` attrs = True
 isArtistPhoto _ = False
 
-getArtistPhoto :: TG.Tag -> Maybe ArtistPhoto
-getArtistPhoto (TG.TagOpen _ attrs _) | Just src <- TG.attrValue <$> find ((== "src") . TG.attrKey) attrs = Just $ ArtistPhoto src $ T.replace "avatar170s" "770x0" src
-                                      | otherwise = Nothing
+getArtistPhoto :: TS.Tag T.Text -> Maybe ArtistPhoto
+getArtistPhoto (TS.TagOpen _ attrs) | Just src <- lookup "src" attrs = Just $ ArtistPhoto src $ T.replace "avatar170s" "770x0" src
+                                    | otherwise = Nothing
 getArtistPhoto _ = error "Unexpected element type"
 
 _silenceUnused :: [a]
