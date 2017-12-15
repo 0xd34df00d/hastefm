@@ -21,6 +21,8 @@ library
   build-depends:       base >= 4.7 && < 5
                      , text == 1.*
                      , tagsoup
+                     , hxt
+                     , HandsomeSoup
                      , aeson == 1.*
   default-language:    Haskell2010
 
