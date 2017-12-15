@@ -21,16 +21,16 @@ main = do
     S.httpServe cfg site
 
 site :: S.Snap ()
-site = S.route [("artist/photos/pageurl", pageUrlHandler),
-                ("artist/photos/parsepage", parsePageHandler)]
+site = S.route [("artist/photos/pageurl", photosPageUrlHandler),
+                ("artist/photos/parsepage", photosParsePageHandler)]
 
-pageUrlHandler :: S.Snap ()
-pageUrlHandler = do
+photosPageUrlHandler :: S.Snap ()
+photosPageUrlHandler = do
     artist <- S.getPostParam "artist"
     maybe (S.writeBS "must specify the artist") S.writeLBS $ runOnText artistPhotoPage <$> artist
 
-parsePageHandler :: S.Snap ()
-parsePageHandler = do
+photosParsePageHandler :: S.Snap ()
+photosParsePageHandler = do
     files <- S.handleMultipart S.defaultUploadPolicy $ const reader
     case files of
         [file] -> S.writeLBS $ runOnText parsePage file
