@@ -35,3 +35,6 @@ recArtistsArrow = hread >>> css ".recs-feed-item--artist" >>> proc x -> do
     name <- css ".link-block-target" /> getText >>> arr (T.strip . T.pack) -< x
     similarTo <- listA $ css ".context a" /> getText >>> arr T.pack -< x
     returnA -< Recommended { .. }
+
+_silenceUnused :: [a]
+_silenceUnused = [undefined recommendedArtists]
