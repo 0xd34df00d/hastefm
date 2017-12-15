@@ -32,6 +32,6 @@ parseArtistsPage = RecommendedArtists . runLA recArtistsArrow . T.unpack
 
 recArtistsArrow :: ArrowXml a => a String Recommended
 recArtistsArrow = hread >>> css ".recs-feed-item--artist" >>> proc x -> do
-    name <- css ".link-block-target" /> getText >>> arr T.pack -< x
+    name <- css ".link-block-target" /> getText >>> arr (T.strip . T.pack) -< x
     similarTo <- listA $ css ".context >> a" /> getText >>> arr T.pack -< x
     returnA -< Recommended { .. }
