@@ -22,18 +22,18 @@ main = do
 
 site :: S.Snap ()
 site = S.route [("artist/photos/pageurl", photosPageUrlHandler),
-                ("artist/photos/parsepage", photosParsePageHandler)]
+                ("artist/photos/parsepage", parsePageHandler parsePage)]
 
 photosPageUrlHandler :: S.Snap ()
 photosPageUrlHandler = do
     artist <- S.getPostParam "artist"
     maybe (S.writeBS "must specify the artist") S.writeLBS $ runOnText artistPhotoPage <$> artist
 
-photosParsePageHandler :: S.Snap ()
-photosParsePageHandler = do
+parsePageHandler :: A.ToJSON a => (T.Text -> a) -> S.Snap ()
+parsePageHandler parser = do
     files <- S.handleMultipart S.defaultUploadPolicy $ const reader
     case files of
-        [file] -> S.writeLBS $ runOnText parsePage file
+        [file] -> S.writeLBS $ runOnText parser file
         _ -> S.writeBS "must specify the contents"
     where reader is = do
                 maybeStr <- IS.read is
