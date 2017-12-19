@@ -13,7 +13,8 @@ import qualified Data.Aeson as A
 import qualified System.IO.Streams as IS(read)
 import Data.Monoid
 
-import Lastfm.Photos
+import qualified Lastfm.Photos as LP
+import qualified Lastfm.Recommended as LR
 
 main :: IO ()
 main = do
@@ -22,12 +23,19 @@ main = do
 
 site :: S.Snap ()
 site = S.route [("artist/photos/pageurl", photosPageUrlHandler),
-                ("artist/photos/parsepage", parsePageHandler parsePage)]
+                ("artist/photos/parsepage", parsePageHandler LP.parsePage),
+                ("recommended/artists/pageurl", recArtistsPageUrlHandler),
+                ("recommended/artists/parsepage", parsePageHandler LR.parseArtistsPage)]
 
 photosPageUrlHandler :: S.Snap ()
 photosPageUrlHandler = do
     artist <- S.getPostParam "artist"
-    maybe (S.writeBS "must specify the artist") S.writeLBS $ runOnText artistPhotoPage <$> artist
+    maybe (S.writeBS "must specify the artist") S.writeLBS $ runOnText LP.artistPhotoPage <$> artist
+
+recArtistsPageUrlHandler :: S.Snap ()
+recArtistsPageUrlHandler = do
+    username <- S.getPostParam "self"
+    maybe (S.writeBS "must specify self username") S.writeLBS $ runOnText LR.recommendedArtistsPage <$> username
 
 parsePageHandler :: A.ToJSON a => (T.Text -> a) -> S.Snap ()
 parsePageHandler parser = do
