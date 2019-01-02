@@ -11,7 +11,6 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import qualified Data.Aeson as A
 import qualified System.IO.Streams as IS(read)
-import Data.Monoid
 
 import qualified Lastfm.Photos as LP
 import qualified Lastfm.Recommended as LR

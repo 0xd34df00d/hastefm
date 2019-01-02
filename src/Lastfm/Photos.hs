@@ -14,7 +14,6 @@ import qualified Data.Text as T
 import qualified Text.HTML.TagSoup as TS
 import qualified Data.Aeson as A
 import GHC.Generics
-import Data.Monoid
 import Data.Maybe(mapMaybe)
 
 newtype ImagesPageUrl = ImagesPageUrl { imagesUrl :: T.Text } deriving (Eq, Show, Generic, A.ToJSON)
