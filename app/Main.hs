@@ -17,8 +17,8 @@ import qualified Lastfm.Recommended as LR
 
 main :: IO ()
 main = do
-    cfg <- S.commandLineConfig (S.setPort 12000 S.emptyConfig)
-    S.httpServe cfg site
+  cfg <- S.commandLineConfig (S.setPort 12000 S.emptyConfig)
+  S.httpServe cfg site
 
 site :: S.Snap ()
 site = S.route [("artist/photos/pageurl", photosPageUrlHandler),
@@ -28,25 +28,26 @@ site = S.route [("artist/photos/pageurl", photosPageUrlHandler),
 
 photosPageUrlHandler :: S.Snap ()
 photosPageUrlHandler = do
-    artist <- S.getPostParam "artist"
-    maybe (S.writeBS "must specify the artist") S.writeLBS $ runOnText LP.artistPhotoPage <$> artist
+  artist <- S.getPostParam "artist"
+  maybe (S.writeBS "must specify the artist") S.writeLBS $ runOnText LP.artistPhotoPage <$> artist
 
 recArtistsPageUrlHandler :: S.Snap ()
 recArtistsPageUrlHandler = do
-    username <- S.getPostParam "self"
-    maybe (S.writeBS "must specify self username") S.writeLBS $ runOnText LR.recommendedArtistsPage <$> username
+  username <- S.getPostParam "self"
+  maybe (S.writeBS "must specify self username") S.writeLBS $ runOnText LR.recommendedArtistsPage <$> username
 
 parsePageHandler :: A.ToJSON a => (T.Text -> a) -> S.Snap ()
 parsePageHandler parser = do
-    files <- S.handleMultipart S.defaultUploadPolicy $ const reader
-    case files of
-        [file] -> S.writeLBS $ runOnText parser file
-        _ -> S.writeBS "must specify the contents"
-    where reader is = do
-                maybeStr <- IS.read is
-                case maybeStr of
-                    Nothing -> pure mempty
-                    Just str -> (str <>) <$> reader is
+  files <- S.handleMultipart S.defaultUploadPolicy $ const reader
+  case files of
+    [file] -> S.writeLBS $ runOnText parser file
+    _ -> S.writeBS "must specify the contents"
+  where
+    reader is = do
+      maybeStr <- IS.read is
+      case maybeStr of
+        Nothing -> pure mempty
+        Just str -> (str <>) <$> reader is
 
 runOnText :: A.ToJSON a => (T.Text -> a) -> BS.ByteString -> BSL.ByteString
 runOnText f = either (BSL.pack . show) (A.encode . f) . T.decodeUtf8'

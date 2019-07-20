@@ -4,11 +4,9 @@
 {-# LANGUAGE DeriveAnyClass #-}
 
 module Lastfm.Photos
-        (
-         artistPhotoPage,
-         parsePage
-        )
-        where
+( artistPhotoPage
+, parsePage
+) where
 
 import qualified Data.Text as T
 import qualified Text.HTML.TagSoup as TS
@@ -20,22 +18,23 @@ newtype ImagesPageUrl = ImagesPageUrl { imagesUrl :: T.Text } deriving (Eq, Show
 
 artistPhotoPage :: T.Text -> ImagesPageUrl
 artistPhotoPage artist = ImagesPageUrl $ "https://www.last.fm/music/" <> artist' <> "/+images"
-    where artist' = T.replace " " "+" artist
+  where artist' = T.replace " " "+" artist
 
-data ArtistPhoto = ArtistPhoto {
-                       thumb :: T.Text,
-                       full :: T.Text
-                   } deriving (Eq, Show, Generic, A.ToJSON)
+data ArtistPhoto = ArtistPhoto
+  { thumb :: T.Text
+  , full :: T.Text
+  } deriving (Eq, Show, Generic, A.ToJSON)
 
-data ParsePageResult = ParsePageResult {
-                           photoList :: [ArtistPhoto],
-                           nextPage :: Maybe ImagesPageUrl
-                       } deriving (Eq, Show, Generic, A.ToJSON)
+data ParsePageResult = ParsePageResult
+  { photoList :: [ArtistPhoto]
+  , nextPage :: Maybe ImagesPageUrl
+  } deriving (Eq, Show, Generic, A.ToJSON)
 
 parsePage :: T.Text -> ParsePageResult
 parsePage str = ParsePageResult { .. }
-    where photoList = mapMaybe getArtistPhoto $ filter isArtistPhoto $ TS.parseTags str
-          nextPage = Nothing
+  where 
+    photoList = mapMaybe getArtistPhoto $ filter isArtistPhoto $ TS.parseTags str
+    nextPage = Nothing
 
 isArtistPhoto :: TS.Tag T.Text -> Bool
 isArtistPhoto (TS.TagOpen "img" attrs) = ("class", "image-list-image") `elem` attrs

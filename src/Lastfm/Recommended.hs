@@ -3,11 +3,9 @@
 {-# LANGUAGE Arrows #-}
 
 module Lastfm.Recommended
-        (
-         recommendedArtistsPage,
-         parseArtistsPage
-        )
-        where
+( recommendedArtistsPage
+, parseArtistsPage
+) where
 
 import qualified Data.Text as T
 import qualified Data.Aeson as A
@@ -20,10 +18,10 @@ import Lastfm.FetchPageUrl
 recommendedArtistsPage :: T.Text -> FetchPageUrl
 recommendedArtistsPage = const FetchPageUrl { url = "https://www.last.fm/home/artists", requiresLogin = True }
 
-data Recommended = Recommended {
-                       name :: T.Text,
-                       similarTo :: [T.Text]
-                   } deriving (Eq, Show, Generic, A.ToJSON)
+data Recommended = Recommended
+  { name :: T.Text
+  , similarTo :: [T.Text]
+  } deriving (Eq, Show, Generic, A.ToJSON)
 
 newtype RecommendedArtists = RecommendedArtists { recommendedArtists :: [Recommended] } deriving (Eq, Show, Generic, A.ToJSON)
 
@@ -32,9 +30,9 @@ parseArtistsPage = RecommendedArtists . runLA recArtistsArrow . T.unpack
 
 recArtistsArrow :: ArrowXml a => a String Recommended
 recArtistsArrow = hread >>> css ".recs-feed-item--artist" >>> proc x -> do
-    name <- css ".link-block-target" /> getText >>> arr (T.strip . T.pack) -< x
-    similarTo <- listA $ css ".context a" /> getText >>> arr T.pack -< x
-    returnA -< Recommended { .. }
+  name <- css ".link-block-target" /> getText >>> arr (T.strip . T.pack) -< x
+  similarTo <- listA $ css ".context a" /> getText >>> arr T.pack -< x
+  returnA -< Recommended { .. }
 
 _silenceUnused :: [a]
 _silenceUnused = [undefined recommendedArtists]
