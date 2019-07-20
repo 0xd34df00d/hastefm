@@ -7,7 +7,7 @@ license:             BSD3
 license-file:        LICENSE
 author:              Georg Rudoy
 maintainer:          0xd34df00d@gmail.com
-copyright:           2016-2017 Georg Rudoy
+copyright:           2016-2019 Georg Rudoy
 category:            Web
 build-type:          Simple
 extra-source-files:  README.md
