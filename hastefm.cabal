@@ -20,12 +20,15 @@ library
                      , Lastfm.Recommended
                      , Lastfm.Photos
   build-depends:       base >= 4.7 && < 5
-                     , text == 1.*
-                     , tagsoup
+                     , aeson == 1.*
+                     , bytestring
                      , dom-selector
+                     , html-conduit
                      , hxt
                      , HandsomeSoup
-                     , aeson == 1.*
+                     , tagsoup
+                     , text == 1.*
+                     , xml-conduit
   default-language:    Haskell2010
 
 executable hastefm-exe
