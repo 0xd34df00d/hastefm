@@ -2,14 +2,14 @@
 
 module Main where
 
-import qualified Snap.Core as S
-import qualified Snap.Http.Server as S
-import qualified Snap.Util.FileUploads as S
+import qualified Data.Aeson as A
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
-import qualified Data.Aeson as A
+import qualified Snap.Core as S
+import qualified Snap.Http.Server as S
+import qualified Snap.Util.FileUploads as S
 import qualified System.IO.Streams as IS(read)
 
 import qualified Lastfm.Photos as LP
