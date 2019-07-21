@@ -41,9 +41,13 @@ isArtistPhoto (TS.TagOpen "img" attrs) = ("class", "image-list-image") `elem` at
 isArtistPhoto _ = False
 
 getArtistPhoto :: TS.Tag T.Text -> Maybe ArtistPhoto
-getArtistPhoto (TS.TagOpen _ attrs) | Just src <- lookup "src" attrs = Just $ ArtistPhoto src $ T.replace "avatar170s" "770x0" src
+getArtistPhoto (TS.TagOpen _ attrs) | Just src <- lookup "src" attrs = Just $ photoFromThumb src
                                     | otherwise = Nothing
 getArtistPhoto _ = error "Unexpected element type"
+
+photoFromThumb :: T.Text -> ArtistPhoto
+photoFromThumb thumb = ArtistPhoto { .. }
+  where full = T.replace "avatar170s" "770x0" thumb
 
 _silenceUnused :: [a]
 _silenceUnused = [undefined thumb, undefined full, undefined imagesUrl]
