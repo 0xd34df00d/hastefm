@@ -1,18 +1,19 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE OverloadedStrings, RecordWildCards, QuasiQuotes #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 
 module Lastfm.Photos
 ( artistPhotoPage
 , parsePage
 ) where
 
+import qualified Data.ByteString.Lazy.Char8 as LBS
 import qualified Data.Text as T
-import qualified Text.HTML.TagSoup as TS
 import qualified Data.Aeson as A
 import GHC.Generics
-import Data.Maybe(mapMaybe)
+import Data.Maybe
+import Text.HTML.DOM
+import Text.XML.Cursor
+import Text.XML.Selector.TH
 
 newtype ImagesPageUrl = ImagesPageUrl { imagesUrl :: T.Text } deriving (Eq, Show, Generic, A.ToJSON)
 
@@ -30,24 +31,14 @@ data ParsePageResult = ParsePageResult
   , nextPage :: Maybe ImagesPageUrl
   } deriving (Eq, Show, Generic, A.ToJSON)
 
-parsePage :: T.Text -> ParsePageResult
-parsePage str = ParsePageResult { .. }
-  where 
-    photoList = mapMaybe getArtistPhoto $ filter isArtistPhoto $ TS.parseTags str
+parsePage :: LBS.ByteString -> ParsePageResult
+parsePage page = ParsePageResult { .. }
+  where
+    root = fromDocument $ parseLBS page
+    srcs = mapMaybe (listToMaybe . attribute "src") $ [jq|.image-list-item > img|] `queryT` root
+    photoList = photoFromThumb <$> srcs
     nextPage = Nothing
-
-isArtistPhoto :: TS.Tag T.Text -> Bool
-isArtistPhoto (TS.TagOpen "img" attrs) = ("class", "image-list-image") `elem` attrs
-isArtistPhoto _ = False
-
-getArtistPhoto :: TS.Tag T.Text -> Maybe ArtistPhoto
-getArtistPhoto (TS.TagOpen _ attrs) | Just src <- lookup "src" attrs = Just $ photoFromThumb src
-                                    | otherwise = Nothing
-getArtistPhoto _ = error "Unexpected element type"
 
 photoFromThumb :: T.Text -> ArtistPhoto
 photoFromThumb thumb = ArtistPhoto { .. }
   where full = T.replace "avatar170s" "770x0" thumb
-
-_silenceUnused :: [a]
-_silenceUnused = [undefined thumb, undefined full, undefined imagesUrl]
