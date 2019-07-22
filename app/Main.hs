@@ -11,6 +11,7 @@ import qualified Snap.Core as S
 import qualified Snap.Http.Server as S
 import qualified Snap.Util.FileUploads as S
 import qualified System.IO.Streams as IS(read)
+import Control.Arrow
 
 import qualified Lastfm.Photos as LP
 import qualified Lastfm.Recommended as LR
@@ -22,9 +23,9 @@ main = do
 
 site :: S.Snap ()
 site = S.route [("artist/photos/pageurl", photosPageUrlHandler),
-                ("artist/photos/parsepage", parsePageHandler LP.parsePage),
+                ("artist/photos/parsepage", parsePageHandler $ pure . LP.parsePage),
                 ("recommended/artists/pageurl", recArtistsPageUrlHandler),
-                ("recommended/artists/parsepage", parsePageHandler LR.parseArtistsPage)]
+                ("recommended/artists/parsepage", parsePageHandler $ (show +++ LR.parseArtistsPage) . T.decodeUtf8' . BSL.toStrict)]
 
 photosPageUrlHandler :: S.Snap ()
 photosPageUrlHandler = do
@@ -36,18 +37,18 @@ recArtistsPageUrlHandler = do
   username <- S.getPostParam "self"
   maybe (S.writeBS "must specify self username") S.writeLBS $ runOnText LR.recommendedArtistsPage <$> username
 
-parsePageHandler :: A.ToJSON a => (T.Text -> a) -> S.Snap ()
+parsePageHandler :: A.ToJSON a => (BSL.ByteString -> Either String a) -> S.Snap ()
 parsePageHandler parser = do
   files <- S.handleMultipart S.defaultUploadPolicy $ const reader
   case files of
-    [file] -> S.writeLBS $ runOnText parser file
+    [file] -> S.writeLBS $ BSL.pack ||| A.encode $ parser $ BSL.fromChunks file
     _ -> S.writeBS "must specify the contents"
   where
     reader is = do
       maybeStr <- IS.read is
       case maybeStr of
         Nothing -> pure mempty
-        Just str -> (str <>) <$> reader is
+        Just str -> (str :) <$> reader is
 
 runOnText :: A.ToJSON a => (T.Text -> a) -> BS.ByteString -> BSL.ByteString
 runOnText f = either (BSL.pack . show) (A.encode . f) . T.decodeUtf8'
