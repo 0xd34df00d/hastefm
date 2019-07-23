@@ -12,6 +12,7 @@ import qualified Snap.Http.Server as S
 import qualified Snap.Util.FileUploads as S
 import qualified System.IO.Streams as IS(read)
 import Control.Arrow
+import Control.Monad.Loops
 
 import qualified Lastfm.Photos as LP
 import qualified Lastfm.Recommended as LR
@@ -39,16 +40,10 @@ recArtistsPageUrlHandler = do
 
 parsePageHandler :: A.ToJSON a => (BSL.ByteString -> Either String a) -> S.Snap ()
 parsePageHandler parser = do
-  files <- S.handleMultipart S.defaultUploadPolicy $ const reader
+  files <- S.handleMultipart S.defaultUploadPolicy $ const $ unfoldM . IS.read
   case files of
     [file] -> S.writeLBS $ BSL.pack ||| A.encode $ parser $ BSL.fromChunks file
     _ -> S.writeBS "must specify the contents"
-  where
-    reader is = do
-      maybeStr <- IS.read is
-      case maybeStr of
-        Nothing -> pure mempty
-        Just str -> (str :) <$> reader is
 
 runOnText :: A.ToJSON a => (T.Text -> a) -> BS.ByteString -> BSL.ByteString
 runOnText f = either (BSL.pack . show) (A.encode . f) . T.decodeUtf8'
