@@ -26,7 +26,6 @@ library
                      , html-conduit
                      , hxt
                      , HandsomeSoup
-                     , tagsoup
                      , text == 1.*
                      , xml-conduit
   default-language:    Haskell2010
